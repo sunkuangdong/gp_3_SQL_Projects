@@ -1,31 +1,6 @@
 1. Establish a database connection to the mysql database
 
-2. Create a survey_report table if it doesn't exist. If it does, we need to insert the data into the table, we don't need to create it again.
-    a. we need to async create this table for faster.
-
-    ```sql
-    CREATE TABLE IF NOT EXISTS survey_report (
-        primary key employee_id INT,          // employee_name table
-        first_name VARCHAR(255),              // employee_name table
-        last_name VARCHAR(255),               // employee_name table
-    );
-    ```
-
-3. Initialize an empty list to store the data
-
-    ```python
-    survey_report_data = [
-        {
-            employee_id: 1,
-            first_name: "John",
-            last_name: "Doe",
-            ...
-        },
-        ...
-    ]
-    ```
-
-4. For each employee in the result:
+2. For each employee in the result:
 
     a. Retrieve employee id from the survey_result table, and use the id to get the employee details from the employee_name table.
 
@@ -40,7 +15,7 @@
         attribute_keys = survey_attribute.get(attribute_id)
         ```
 
-    ![alt text](image.png)
+    ![alt text](./python_code/image.png)
 
     c. Use the attribute id to find ValueCode from the survey_result table, and use the ValueCode to get the ValueDescription from the value_set table.
 
@@ -48,10 +23,10 @@
         value_code_id = survey_result.value_code_id
         value_description = value_set.get(value_code_id)
         ```
-    ![alt text](image-1.png)
-    ![alt text](image-2.png)
+    ![alt text](./python_code/image-1.png)
+    ![alt text](./python_code/image-2.png)
 
-    d. Prepare the data push into a list.
+3. Prepare the data push into a list.
 
         ```python
         list_data = [{
@@ -82,9 +57,37 @@
         ]
         ```
 
-    ![alt text](image-3.png)
+    ![alt text](./python_code/image-3.png)
 
     `note: Above a, b, c steps, we need to get these datas by using async function for faster. Once we get the data, we can push it into the list.`
+
+4. Initialize an empty list to store the data.
+
+    ```python
+    survey_report_data = [
+        {
+            employee_id: 1,
+            first_name: "John",
+            last_name: "Doe",
+            ...
+        },
+        ...
+    ]
+    ```
+
+3. To Create a survey_report table by list_data, if it doesn't exist. If it does, we need to insert the data into the table, we don't need to create it again.
+    a. we need to async create this table for faster.
+
+    ```sql
+    CREATE TABLE IF NOT EXISTS survey_report (
+        primary key employee_id INT,          // employee_name table
+        first_name VARCHAR(255),              // employee_name table
+        last_name VARCHAR(255),               // employee_name table
+        ...
+    );
+    ```
+
+4. 
 
 5. Empty the survey_report table.
     ```sql
