@@ -4,7 +4,6 @@ import aiomysql
 # create a dict to store the attributes
 async def create_attributes_list(cursor):
     query = "SELECT AttributeName FROM survey_attribute"
-            
     await cursor.execute(query)
     result = await cursor.fetchall()
     attributes_dict = {}

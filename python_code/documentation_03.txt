@@ -42,12 +42,7 @@
 
     b. Get the attribute id from the survey_result table, and use the id to retrieve every key from the survey_attribute table.
 
-    ![alt text](./python_code/image.png)
-
     c. Use the attribute id to find ValueCode from the survey_result table, and use the ValueCode to get the ValueDescription from the value_set table.
-
-    ![alt text](./python_code/image-1.png)
-    ![alt text](./python_code/image-2.png)
 
     ```SQL
     SELECT 
@@ -76,8 +71,6 @@
         attributes_dict[attribute[0]] = None
     ```
 
-    ![alt text](./python_code/image-3.png)
-
     `note: Above a, b, c steps, we need to get these datas by using async function for faster. Once we get the data, we can push it into the list.`
 
 6. Insert data into the survey_report table.
@@ -87,7 +80,6 @@
     ```
     
 7. Close the database connection.
-
     ```python
     cursor.close()
     conn.close()
