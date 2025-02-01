@@ -8,10 +8,11 @@ async def create_attributes_list(cursor):
     await cursor.execute(query)
     result = await cursor.fetchall()
     attributes_dict = {}
-    attributes_dict.update({"employee_id": None, "first_name": None, "last_name": None})
+    attributes_dict.update({"EmployeeId": None, "FirstName": None, "LastName": None})
     for attribute in result:
         attributes_dict[attribute[0]] = None
     return attributes_dict
+
 # create the table survey_report
 async def create_survey_report_table(cursor, attributes_dict):
     query = """
@@ -19,10 +20,11 @@ async def create_survey_report_table(cursor, attributes_dict):
             """
     columns = []
     for attribute in attributes_dict:
-        if attribute == "employee_id":
+        if attribute == "EmployeeId":
             columns.append(f"{attribute} INT")
         else:
             columns.append(f"{attribute} VARCHAR(255)")
+
     query += ", ".join(columns)
     query += ")"
     await cursor.execute(query)
@@ -30,7 +32,6 @@ async def create_survey_report_table(cursor, attributes_dict):
 async def query_survey_result(cursor):
     query = """
             SELECT 
-
                 sr.EmployeeId,
                 en.LastName,
                 en.FirstName,
@@ -70,7 +71,6 @@ async def query_survey_result(cursor):
 # insert the survey result
 async def insert_survey_result(cursor, survey_result_list): 
     query = """
-
             INSERT INTO survey_report (EmployeeId, LastName, FirstName, AbsentEmployeeReason, Certifications, Cohort, Department, EmployeeAdmins, Gender, HireGroups, ItemizedFunction, ItemizedIndustry, JobAcceptanceDetails, OfficeLocation, OutreachCoach, OutreachStatus, RetireDate, StopFeed, TrackingCompleted, WorkExperienceFunction, WorkExperienceIndustry, YearsofExperience)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
@@ -88,8 +88,6 @@ async def query_survey_report(cursor):
 # insert the data to the survey_report table
 async def insert_data_to_survey_report(cursor):
     survey_result_list = await query_survey_result(cursor)
-    # delete the table survey_report
-    await cursor.execute("DROP TABLE survey_report")
     # create the table survey_report
     await create_attributes_list(cursor)
     # insert the survey result
@@ -119,13 +117,22 @@ async def connect_to_mysql():
             table_names = [table[0] for table in tables]
             # check if the table survey_report is exist
             if "survey_report" not in table_names:
+                print("survey_report table not exist")
                 # create a dict to store the attributes
                 attributes_dict = await create_attributes_list(cursor)
                 # create the table survey_report
                 await create_survey_report_table(cursor, attributes_dict)
+                # insert the data to the survey_report table
                 await insert_data_to_survey_report(cursor)
             else:
+                print("survey_report table exist")
+                # delete the table survey_report
+                await cursor.execute("DELETE FROM survey_report")
+                # insert the data to the survey_report table
                 await insert_data_to_survey_report(cursor)
+
+
+
 
     except Exception as e:
         print(f"connect to mysql error: {str(e)}")
