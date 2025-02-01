@@ -12,7 +12,6 @@ async def create_attributes_list(cursor):
     for attribute in result:
         attributes_dict[attribute[0]] = None
     return attributes_dict
-
 # create the table survey_report
 async def create_survey_report_table(cursor, attributes_dict):
     query = """
@@ -21,7 +20,8 @@ async def create_survey_report_table(cursor, attributes_dict):
     columns = []
     for attribute in attributes_dict:
         if attribute == "EmployeeId":
-            columns.append(f"{attribute} INT")
+            columns.append(f"{attribute} INT PRIMARY KEY")
+            columns.append("FOREIGN KEY (EmployeeId) REFERENCES employee_name(Id)")
         else:
             columns.append(f"{attribute} VARCHAR(255)")
 
@@ -81,7 +81,6 @@ async def query_survey_report(cursor):
     query = """
             SELECT * FROM survey_report
             """
-
     await cursor.execute(query)
     result = await cursor.fetchall()
     return result
@@ -93,7 +92,7 @@ async def insert_data_to_survey_report(cursor):
     # insert the survey result
     await insert_survey_result(cursor, survey_result_list)
     # query the survey result
-    await query_survey_report(cursor)
+    # await query_survey_report(cursor)
 
 
 # Async function to connect and interact with MySQL
@@ -117,7 +116,6 @@ async def connect_to_mysql():
             table_names = [table[0] for table in tables]
             # check if the table survey_report is exist
             if "survey_report" not in table_names:
-                print("survey_report table not exist")
                 # create a dict to store the attributes
                 attributes_dict = await create_attributes_list(cursor)
                 # create the table survey_report
@@ -125,9 +123,6 @@ async def connect_to_mysql():
                 # insert the data to the survey_report table
                 await insert_data_to_survey_report(cursor)
             else:
-                print("survey_report table exist")
-                # delete the table survey_report
-                await cursor.execute("DELETE FROM survey_report")
                 # insert the data to the survey_report table
                 await insert_data_to_survey_report(cursor)
 
